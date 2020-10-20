@@ -6,4 +6,8 @@
     <RootNamespace>swe_http_webservice</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\HTTPServerLib\HTTPServerLib.csproj" />
+  </ItemGroup>
+
 </Project>

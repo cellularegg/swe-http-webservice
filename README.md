@@ -1,3 +1,9 @@
+# Time Tracking
+| Date  | Time in h | Comment |
+| ------------- | ------------- | ------------- |
+| 20-oct-2020 | 2.75 | Started developing HTTP Server |
+
+
 # REST/HTTP-based plain-text Webservices
 
 This project is intended to create a webservice handler based on a restful HTTP-based

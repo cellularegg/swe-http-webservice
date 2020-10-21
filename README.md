@@ -2,7 +2,7 @@
 | Date  | Time in h | Comment |
 | ------------- | ------------- | ------------- |
 | 20-oct-2020 | 2.75 | Started developing HTTP Server |
-| 21-oct-2020 | 2 | Added MessageCollection + Tests |
+| 21-oct-2020 | 3 | Added MessageCollection + Tests |
 
 
 # REST/HTTP-based plain-text Webservices

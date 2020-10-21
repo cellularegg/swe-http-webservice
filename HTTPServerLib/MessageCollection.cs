@@ -39,7 +39,12 @@ namespace HTTPServerLib
 
         public bool UpdateMessage(int id, string content)
         {
-            throw new NotImplementedException();
+            if (_Messages.ContainsKey(id))
+            {
+                _Messages[id] = content;
+                return true;
+            }
+            return false;
         }
         public bool DeleteMessage(int id)
         {
@@ -59,7 +64,11 @@ namespace HTTPServerLib
 
         public string GetMessageContent(int id)
         {
-            throw new NotImplementedException();
+            if (_Messages.ContainsKey(id))
+            {
+                return _Messages[id];
+            }
+            return string.Empty;
         }
         public string GetMessageAsJson(int id)
         {

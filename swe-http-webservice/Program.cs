@@ -12,7 +12,6 @@ namespace swe_http_webservice
             Console.WriteLine("Starting Port on 8080");
             HTTPServer server = new HTTPServer(8080);
             server.Start();
-            
         }
     }
 }

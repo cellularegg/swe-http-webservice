@@ -26,21 +26,23 @@ namespace HTTPServerLib
             {
                 return NullResponse();
             }
-            if (request.Type == "GET")
+            switch (request.Method)
             {
-                if (request.Path == "/hello")
-                {
-                    string body = "{\"Hello\":\"World\"}";
-                    return new ResponseContext("200 OK", "application/json", body);
-                }
-                else
-                {
+                case RequestMethod.GET:
+                    if (request.Path == "/hello")
+                    {
+                        string body = "{\"Hello\":\"World\"}";
+                        return new ResponseContext("200 OK", "application/json", body);
+                    }
                     return PageNotFoundResponse();
-                }
-            }
-            else
-            {
-                return MethodNotAllowedResponse();
+                case RequestMethod.POST:
+                    //break;
+                case RequestMethod.PUT:
+                    //break;
+                case RequestMethod.DELETE:
+                    //break;
+                default:
+                    return MethodNotAllowedResponse();
             }
         }
 

@@ -52,8 +52,10 @@ namespace HTTPServerLib
             string msg = "";
             while (sr.Peek() != -1)
             {
-                msg += sr.ReadLine() + "\n";
+                // sr.ReadLine() it gets stuck when receiving POST requests
+                msg += (char)sr.Read();
             }
+
             RequestContext req = RequestContext.GetRequestContext(msg);
             Debug.WriteLine(req);
             ResponseContext rsp = ResponseContext.From(req);

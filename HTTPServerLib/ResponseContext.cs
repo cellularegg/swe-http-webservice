@@ -12,7 +12,6 @@ namespace HTTPServerLib
         private string _Body = null;
         private string _Status;
         private string _ContentType;
-
         private ResponseContext(string status, string contentType, string body)
         {
             this._ContentType = contentType;
@@ -26,21 +25,44 @@ namespace HTTPServerLib
             {
                 return NullResponse();
             }
-            if (request.Type == "GET")
+            MessageCollection _msgColl = MessageCollection.GetMessageCollection();
+            switch (request.Method)
             {
-                if (request.Path == "/hello")
-                {
-                    string body = "{\"Hello\":\"World\"}";
-                    return new ResponseContext("200 OK", "application/json", body);
-                }
-                else
-                {
+                case RequestMethod.GET:
+                    if (request.Path == "/hello")
+                    {
+                        string body = "{\"Hello\":\"World\"}";
+                        return new ResponseContext("200 OK", "application/json", body);
+                    }
+                    else if (request.Path == "/messages")
+                    {
+                        // TODO CHECK FOR EMTPY body -> Send correct "Error"
+                        string body = _msgColl.GetMessagesArrayAsJson();
+                        return new ResponseContext("200 OK", "application/json", body);
+                    }
                     return PageNotFoundResponse();
-                }
-            }
-            else
-            {
-                return MethodNotAllowedResponse();
+                case RequestMethod.POST:
+                    if (request.Path == "/messages")
+                    {
+                        string msgContent = _msgColl.GetMsgContentFromJson(request.Body);
+                        if (msgContent == string.Empty)
+                        {
+                            return new ResponseContext("400 Bad Request", "text/plain", "Error, Msg was not in the correct JOSN Format.");
+                        }
+                        else
+                        {
+                            _msgColl.AddMessage(msgContent);
+                            return new ResponseContext("201 Created", "text/plain", "Message Successfully created.");
+                        }
+                    }
+                    return PageNotFoundResponse();
+                //break;
+                case RequestMethod.PUT:
+                //break;
+                case RequestMethod.DELETE:
+                //break;
+                default:
+                    return MethodNotAllowedResponse();
             }
         }
 

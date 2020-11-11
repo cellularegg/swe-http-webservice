@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 
@@ -9,19 +10,21 @@ namespace HTTPServerLib
 {
     public class RequestContext
     {
-        public string Type { get; set; }
+        public RequestMethod Method { get; set; }
         public string Path { get; set; }
         public string Host { get; set; }
+        public string Body { get; set; }
         // TODO Change Headers to Dict
         public Dictionary<string, string> Headers { get; set; }
         // TODO Add body for POST request.
 
-        private RequestContext(string type, string path, string host, Dictionary<string, string> headers)
+        private RequestContext(RequestMethod method, string path, string host, Dictionary<string, string> headers, string body = "")
         {
-            this.Type = type;
+            this.Method = method;
             this.Path = path;
             this.Host = host;
             this.Headers = headers;
+            this.Body = body;
         }
 
         public static RequestContext GetRequestContext(string request)
@@ -31,13 +34,29 @@ namespace HTTPServerLib
                 return null;
             }
             string[] content = request.Split('\n');
-            string type = content[0].Split(' ')[0];
+
+            string methodString = content[0].Split(' ')[0];
+            RequestMethod requestMethod;
             string path = content[0].Split(' ')[1];
             Dictionary<string, string> headers = new Dictionary<string, string>();
+            int bodyStartIdx = -1;
+            string body = "";
+            // Parse String to Enum
+            try
+            {
+                requestMethod = (RequestMethod)Enum.Parse(typeof(RequestMethod), methodString, true);
+            }
+            catch (ArgumentException ex)
+            {
+                Console.WriteLine($"ERROR: {methodString} is not a member of RequestMethod enum. Exception: ${ex}");
+                return null;
+            }
+            // Read Headers
             for (int i = 1; i < content.Length; i++)
             {
-                if (string.IsNullOrEmpty(content[i]))
+                if (string.IsNullOrEmpty(content[i]) || content[i] == "\r")
                 {
+                    bodyStartIdx = i;
                     break;
                 }
                 // Headers are case-insensetive -> https://www.w3.org/Protocols/rfc2616/rfc2616-sec4.html#sec4.2
@@ -50,13 +69,21 @@ namespace HTTPServerLib
                     headers.Add(tmp[0], tmp[1]);
                 }
             }
-            return new RequestContext(type, path, headers["host"], headers);
+            // Read Body 
+            if (bodyStartIdx != -1)
+            {
+                for (int i = bodyStartIdx + 1; i < content.Length; i++)
+                {
+                    body += content[i] + "\n";
+                }
+            }
+            return new RequestContext(requestMethod, path, headers["host"], headers, body);
         }
 
         public override string ToString()
         {
             string tmp = $"RequestContext:{Environment.NewLine}";
-            tmp += $"\tType: {this.Type}{Environment.NewLine}";
+            tmp += $"\tType: {this.Method}{Environment.NewLine}";
             tmp += $"\tPath {this.Path}{Environment.NewLine}";
             tmp += $"\tHost: {this.Host}{Environment.NewLine}";
             tmp += $"\tHeaders: {Environment.NewLine}";

@@ -5,7 +5,9 @@ VisualStudioVersion = 16.0.30523.141
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "swe-http-webservice", "swe-http-webservice\swe-http-webservice.csproj", "{1C90F29B-6E7A-427B-BD4D-542CCAA2018A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HTTPServerLib", "HTTPServerLib\HTTPServerLib.csproj", "{31BDE1CF-8B17-4951-A430-C4CD01BE9E6C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HTTPServerLib", "HTTPServerLib\HTTPServerLib.csproj", "{31BDE1CF-8B17-4951-A430-C4CD01BE9E6C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HTTPServerLib.Test", "HTTPServerLib.Test\HTTPServerLib.Test.csproj", "{392BEA5D-1CE2-4BE0-8892-FF84B7CB0A09}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{31BDE1CF-8B17-4951-A430-C4CD01BE9E6C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{31BDE1CF-8B17-4951-A430-C4CD01BE9E6C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{31BDE1CF-8B17-4951-A430-C4CD01BE9E6C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{392BEA5D-1CE2-4BE0-8892-FF84B7CB0A09}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{392BEA5D-1CE2-4BE0-8892-FF84B7CB0A09}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{392BEA5D-1CE2-4BE0-8892-FF84B7CB0A09}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{392BEA5D-1CE2-4BE0-8892-FF84B7CB0A09}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

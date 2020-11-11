@@ -52,6 +52,8 @@ namespace HTTPServerLib
             }
         }
 
+        
+
         public bool UpdateMessage(int id, string content)
         {
             if (_Messages.ContainsKey(id))
@@ -104,12 +106,17 @@ namespace HTTPServerLib
 
         public string GetMessagesArrayAsJson()
         {
-            if (this.Count == 0)
+            if(this.Count == 0)
             {
                 return "";
             }
             JArray result = new JArray(from m in _Messages select new JObject(new JProperty("Id", m.Key), new JProperty("Content", m.Value)));
             return result.ToString();
+        }
+
+        public string GetMsgContentFromJson(string jsonMsg0)
+        {
+            throw new NotImplementedException();
         }
     }
 }

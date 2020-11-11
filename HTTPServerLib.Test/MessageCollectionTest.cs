@@ -227,8 +227,8 @@ namespace HTTPServerLib.Test
             // Assert
             Assert.AreEqual(msg0, msg0Content);
             Assert.AreEqual(msg1, msg1Content);
-            Assert.IsNull(msg2);
-            Assert.IsNull(msg3);
+            Assert.IsEmpty(msg2);
+            Assert.IsEmpty(msg3);
             msgColl.Reset();
         }
     }

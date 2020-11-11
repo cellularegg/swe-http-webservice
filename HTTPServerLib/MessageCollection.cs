@@ -114,9 +114,20 @@ namespace HTTPServerLib
             return result.ToString();
         }
 
-        public string GetMsgContentFromJson(string jsonMsg0)
+        public string GetMsgContentFromJson(string jsonMsg)
         {
-            throw new NotImplementedException();
+            string content;
+            try
+            {
+                JObject myJobject = JObject.Parse(jsonMsg);
+                content = myJobject.SelectToken("Content").Value<string>();
+                return content;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"ERROR: {ex.Message}");
+                return String.Empty;
+            }
         }
     }
 }

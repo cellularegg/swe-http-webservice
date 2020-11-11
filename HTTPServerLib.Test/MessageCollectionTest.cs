@@ -152,7 +152,56 @@ namespace HTTPServerLib.Test
             int actualMsgCount = msgColl1.Count;
             // Assert
             Assert.AreEqual(actualMsgCount, 2);
+            Assert.AreSame(msgColl1, msgColl2);
+            msgColl1.Reset();
+        }
+
+        [Test]
+        public void TestMessageCollectionGetMessagesArrayAsJson()
+        {
+            // Arrange
+            MessageCollection msgColl = MessageCollection.GetMessageCollection();
+            string actualMsgsEmpty = msgColl.GetMessagesArrayAsJson();
+            // Id: 0
+            string msg0Content = "Hey, This is just a test Message!";
+            msgColl.AddMessage(msg0Content);
+            // Id: 1
+            string msg1Content = "Another test Message!";
+            msgColl.AddMessage(msg1Content);
+            // Act
+            string actualJsonString = msgColl.GetMessagesArrayAsJson().Trim();
+            JArray arr = JArray.Parse(actualJsonString);
+            Tuple<int, string> msg0 = msgColl.GetMsgTupleFromJson(arr[0].ToString());
+            Tuple<int, string> msg1 = msgColl.GetMsgTupleFromJson(arr[1].ToString());
+            // Assert
+            Assert.AreEqual(msg0Content, msg0.Item2);
+            Assert.AreEqual(msg1Content, msg1.Item2);
+            Assert.AreEqual(0, msg0.Item1);
+            Assert.AreEqual(1, msg1.Item1);
+            Assert.AreEqual("", actualMsgsEmpty);
+            msgColl.Reset();
+        }
+
+        [Test]
+        public void TestMessageCollectionReset()
+        {
+            // Arrange
+            MessageCollection msgColl1 = MessageCollection.GetMessageCollection();
+            MessageCollection msgColl2 = MessageCollection.GetMessageCollection();
+            // Id: 0
+            string msg0Content = "Hey, This is just a test Message!";
+            msgColl1.AddMessage(msg0Content);
+            // Id: 1
+            string msg1Content = "Another test Message!";
+            msgColl2.AddMessage(msg1Content);
+            // Act
+            msgColl1.Reset();
+
+            // Assert
             Assert.AreEqual(msgColl1, msgColl2);
+            Assert.AreEqual(0, msgColl1.MaxIdx);
+            Assert.AreEqual(0, msgColl1.Count);
+            msgColl1.Reset();
         }
     }
 }

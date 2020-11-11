@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Text.Json;
 
 namespace HTTPServerLib
 {
@@ -98,6 +100,16 @@ namespace HTTPServerLib
                 return jsonObject.ToString();
             }
             return "";
+        }
+
+        public string GetMessagesArrayAsJson()
+        {
+            if (this.Count == 0)
+            {
+                return "";
+            }
+            JArray result = new JArray(from m in _Messages select new JObject(new JProperty("Id", m.Key), new JProperty("Content", m.Value)));
+            return result.ToString();
         }
     }
 }

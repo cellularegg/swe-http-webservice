@@ -41,8 +41,10 @@ namespace HTTPServerLib
             try
             {
                 JObject myJobject = JObject.Parse(jsonMsg);
-                id = myJobject.SelectToken("Id").Value<int>();
-                content = myJobject.SelectToken("Content").Value<string>();
+                // id = myJobject.SelectToken("Id").Value<int>(); -- Case Insensitive!!
+                id = myJobject.GetValue("Id", StringComparison.OrdinalIgnoreCase).Value<int>();
+                //content = myJobject.SelectToken("Content").Value<string>(); -- Case Insensitive!!
+                content = myJobject.GetValue("Content", StringComparison.OrdinalIgnoreCase).Value<string>();
                 return Tuple.Create(id, content);
             }
             catch (Exception ex)
@@ -120,13 +122,14 @@ namespace HTTPServerLib
             try
             {
                 JObject myJobject = JObject.Parse(jsonMsg);
-                content = myJobject.SelectToken("Content").Value<string>();
+                //content = myJobject.SelectToken("Content").Value<string>(); -- Case Insensitive!!
+                content = myJobject.GetValue("Content", StringComparison.OrdinalIgnoreCase).Value<string>();
                 return content;
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"ERROR: {ex.Message}");
-                return String.Empty;
+                return string.Empty;
             }
         }
     }

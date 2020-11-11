@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-// Hopefully I am allowed to use Newtensoft.Json
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -9,15 +8,29 @@ namespace HTTPServerLib
 {
     public class MessageCollection
     {
+        // TODO Make threadsafe
+        private static MessageCollection _instance = new MessageCollection();
+        public static MessageCollection GetMessageCollection()
+        {
+            return _instance;
+        }
         // Int is ID, string is Message Content
         private Dictionary<int, string> _Messages;
         public int MaxIdx { get; private set; }
         public int Count { get { return _Messages.Count; } }
-        public MessageCollection()
+        private MessageCollection()
         {
             MaxIdx = 0;
             _Messages = new Dictionary<int, string>();
         }
+
+        // For Testing with singleton class
+        public void Reset()
+        {
+            MaxIdx = 0;
+            _Messages = new Dictionary<int, string>();
+        }
+
 
         public Tuple<int, string> GetMsgTupleFromJson(string jsonMsg)
         {

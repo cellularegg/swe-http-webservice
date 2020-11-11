@@ -13,7 +13,7 @@ namespace HTTPServerLib.Test
         public void TestMessageCollectionIndex()
         {
             // Arrange
-            MessageCollection msgColl = new MessageCollection();
+            MessageCollection msgColl = MessageCollection.GetMessageCollection();
             int addingTillIdx = 3;
             for (int i = 0; i < addingTillIdx; i++)
             {
@@ -23,12 +23,13 @@ namespace HTTPServerLib.Test
             int actualIdx = msgColl.MaxIdx;
             // Assert
             Assert.AreEqual(addingTillIdx, actualIdx);
+            msgColl.Reset();
         }
         [Test]
         public void TestMessageCollectionRemove()
         {
             // Arrange
-            MessageCollection msgColl = new MessageCollection();
+            MessageCollection msgColl = MessageCollection.GetMessageCollection();
             msgColl.AddMessage("Test");
             msgColl.AddMessage("Test");
             msgColl.AddMessage("Test");
@@ -44,13 +45,14 @@ namespace HTTPServerLib.Test
             Assert.IsTrue(actualDeleteIdx0);
             Assert.IsFalse(actualDeleteIdx0_2);
             Assert.IsTrue(actualDeleteIdx3);
+            msgColl.Reset();
         }
 
         [Test]
         public void TestMessageCollectionGetMessageAsJson()
         {
             // Arrange
-            MessageCollection msgColl = new MessageCollection();
+            MessageCollection msgColl = MessageCollection.GetMessageCollection();
             // Id: 0
             string msg0Content = "Hey, This is just a test Message!";
             msgColl.AddMessage(msg0Content);
@@ -69,13 +71,14 @@ namespace HTTPServerLib.Test
             Assert.AreEqual(1, message1.Item1);
             Assert.AreEqual(msg1Content, message1.Item2);
             Assert.IsEmpty(actualJsonStringMsg100);
+            msgColl.Reset();
         }
 
         [Test]
         public void TestMessageCollectionGetMsgTupleFromJson()
         {
             // Arrange
-            MessageCollection msgColl = new MessageCollection();
+            MessageCollection msgColl = MessageCollection.GetMessageCollection();
             int msg0Id = 0;
             string msg0Content = "This is just a sample message.";
             string jsonMsg0 = "{ \"Id\": " + msg0Id + ", \"Content\": \"" + msg0Content + "\" }";
@@ -95,13 +98,14 @@ namespace HTTPServerLib.Test
             Assert.IsNull(msg1);
             Assert.IsNull(msg2);
             Assert.IsNull(msg3);
+            msgColl.Reset();
         }
 
         [Test]
         public void TestMessageCollectionUpdateMessage()
         {
             // Arrange
-            MessageCollection msgColl = new MessageCollection();
+            MessageCollection msgColl = MessageCollection.GetMessageCollection();
             msgColl.AddMessage("Hey");
             string updatedContent = "Hey, This is my updated Message Content";
             // Act
@@ -112,13 +116,14 @@ namespace HTTPServerLib.Test
             Assert.AreEqual(actualMsgContent, updatedContent);
             Assert.IsTrue(actualHasSucceeded);
             Assert.IsFalse(shouldFail);
+            msgColl.Reset();
         }
 
         [Test]
         public void TestMessageCollectionGetMessageContent()
         {
             // Arrange
-            MessageCollection msgColl = new MessageCollection();
+            MessageCollection msgColl = MessageCollection.GetMessageCollection();
             string msgContent = "Sample Message";
             msgColl.AddMessage(msgContent);
             // Act
@@ -127,6 +132,7 @@ namespace HTTPServerLib.Test
             // Assert
             Assert.AreEqual(msgContent, actualMsgContent);
             Assert.IsEmpty(actualEmptyMsgContent);
+            msgColl.Reset();
         }
     }
 }

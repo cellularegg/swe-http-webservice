@@ -52,7 +52,7 @@ namespace HTTPServerLib
             string msg = "";
             while (sr.Peek() != -1)
             {
-                // If sr.ReadLine() it gets stuck when receiving POST requests
+                // sr.ReadLine() it gets stuck when receiving POST requests
                 msg += (char)sr.Read();
             }
 

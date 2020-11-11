@@ -134,5 +134,25 @@ namespace HTTPServerLib.Test
             Assert.IsEmpty(actualEmptyMsgContent);
             msgColl.Reset();
         }
+
+        [Test]
+        public void TestmessageCollectionIsSingleton()
+        {
+            // Test just for me to check if I implemented Singleton correctly
+
+            // Arrange
+            MessageCollection msgColl1 = MessageCollection.GetMessageCollection();
+            MessageCollection msgColl2 = MessageCollection.GetMessageCollection();
+
+            string msgContent = "Sample Message";
+            msgColl1.AddMessage(msgContent);
+            msgContent = "Another Sample Message";
+            msgColl2.AddMessage(msgContent);
+            // Act
+            int actualMsgCount = msgColl1.Count;
+            // Assert
+            Assert.AreEqual(actualMsgCount, 2);
+            Assert.AreEqual(msgColl1, msgColl2);
+        }
     }
 }

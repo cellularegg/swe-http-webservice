@@ -132,5 +132,21 @@ namespace HTTPServerLib
                 return string.Empty;
             }
         }
+
+        public int GetIdFromJson(string jsonMsg)
+        {
+            int id;
+            try
+            {
+                JObject myJobject = JObject.Parse(jsonMsg);
+                id = myJobject.GetValue("Id", StringComparison.OrdinalIgnoreCase).Value<int>();
+                return id;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"ERROR: {ex.Message}");
+                return -1;
+            }
+        }
     }
 }

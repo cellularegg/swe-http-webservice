@@ -26,22 +26,41 @@ namespace HTTPServerLib
                 return NullResponse();
             }
             MessageCollection _msgColl = MessageCollection.GetMessageCollection();
+            int msgId = GetMsgIdFromPath(request.Path);
+            if (msgId == -100)
+            {
+                return PageNotFoundResponse();
+            }
             switch (request.Method)
             {
                 case RequestMethod.GET:
+                    string body;
                     if (request.Path == "/hello")
                     {
-                        string body = "{\"Hello\":\"World\"}";
+                        body = "{\"Hello\":\"World\"}";
                         return new ResponseContext("200 OK", "application/json", body);
                     }
-                    else if (request.Path == "/messages")
+                    else if (msgId == -1)
                     {
                         // TODO CHECK FOR EMTPY body -> Send correct "Error"
-                        string body = _msgColl.GetMessagesArrayAsJson();
+                        body = _msgColl.GetMessagesArrayAsJson();
                         return new ResponseContext("200 OK", "application/json", body);
                     }
-                    return PageNotFoundResponse();
+                    else
+                    {
+                        // TODO CHECK FOR EMTPY body -> Send correct "Error"
+                        body = _msgColl.GetMessageAsJson(msgId);
+                        if (body != string.Empty)
+                        {
+                            return new ResponseContext("200 OK", "application/json", body);
+                        }
+                        else
+                        {
+                            return new ResponseContext("400 Bad Request", "text/plain", $"Error, requested msg with Id: {msgId} does not exist.\n");
+                        }
+                    }
                 case RequestMethod.POST:
+                    // Or if(msgId == -1)
                     if (request.Path == "/messages")
                     {
                         string msgContent = _msgColl.GetMsgContentFromJson(request.Body);
@@ -58,7 +77,8 @@ namespace HTTPServerLib
                     return PageNotFoundResponse();
                 //break;
                 case RequestMethod.PUT:
-                    if (request.Path == "/messages")
+                    // Or if(msgId == -1) You can send PUT updates but have to provide correct json body!
+                    if (request.Path == "/messages" || msgId >= 0)
                     {
                         Tuple<int, string> msg = _msgColl.GetMsgTupleFromJson(request.Body);
                         if (msg == null)
@@ -71,14 +91,40 @@ namespace HTTPServerLib
                             {
                                 return new ResponseContext("200 OK", "text/plain", "Message successfully edited.\n");
                             }
-                            // TODO Maybe change status code to 400?
+                            // Maybe 500 is not the correct status code??
                             return new ResponseContext("500 Internal Server Error", "text/plain", $"Error, when editing msg with Id: {msg.Item1}.\n");
                         }
                     }
                     return PageNotFoundResponse();
-                //break;
                 case RequestMethod.DELETE:
-                //break;
+                    // Or if(msgId == -1) You can send PUT updates but have to provide correct json body!
+                    if (request.Path == "/messages")
+                    {
+                        int id = _msgColl.GetIdFromJson(request.Body);
+                        if (id == -1)
+                        {
+                            return new ResponseContext("400 Bad Request", "text/plain", "Error, make sure request is JSON and has Id key.\n");
+                        }
+                        else
+                        {
+                            if (_msgColl.DeleteMessage(id))
+                            {
+                                return new ResponseContext("200 OK", "text/plain", "Message successfully deleted.\n");
+                            }
+                            // Maybe 500 is not the correct status code??
+                            return new ResponseContext("500 Internal Server Error", "text/plain", $"Error, when deleting msg with Id: {id}.\n");
+                        }
+                    }
+                    else if (msgId >= 0)
+                    {
+                        if (_msgColl.DeleteMessage(msgId))
+                        {
+                            return new ResponseContext("200 OK", "text/plain", "Message successfully deleted.\n");
+                        }
+                        // Maybe 500 is not the correct status code??
+                        return new ResponseContext("500 Internal Server Error", "text/plain", $"Error, when deleting msg with Id: {msgId}.\n");
+                    }
+                    return PageNotFoundResponse();
                 default:
                     return MethodNotAllowedResponse();
             }
@@ -95,6 +141,28 @@ namespace HTTPServerLib
         private static ResponseContext MethodNotAllowedResponse()
         {
             return new ResponseContext("405 Bad Request", "text/plain", "Error method not allowed\n");
+        }
+
+        // Returns the MessageId from the request path -1 when no msg id is provided and -100 if path is invalid
+        // Example: /messages will return -1 and /messages/7 will return 7
+        // I think this is not a clean implementation maybe TODO make it clean :)
+        private static int GetMsgIdFromPath(string path)
+        {
+            // Maybe shorter / better with regex?
+            string[] splitPath = path.Split('/');
+            if (splitPath.Length == 2 && splitPath[1] == "messages")
+            {
+                return -1;
+            }
+            if (splitPath.Length == 3 && splitPath[1] == "messages")
+            {
+                int id;
+                if (int.TryParse(splitPath[2], out id))
+                {
+                    return id;
+                }
+            }
+            return -100;
         }
         public void Post(NetworkStream stream)
         {

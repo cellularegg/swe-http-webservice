@@ -231,5 +231,29 @@ namespace HTTPServerLib.Test
             Assert.IsEmpty(msg3);
             msgColl.Reset();
         }
+
+        [Test]
+        public void TestMessageCollectionGetIdFromJson()
+        {
+            // Arrange
+            MessageCollection msgColl = MessageCollection.GetMessageCollection();
+            int msg0Id = 0;
+            string jsonMsg0 = "{ \"Id\": " + msg0Id + "}";
+            string jsonMsg1 = "{ \"Content\": \"Sample content\" }";
+            string jsonMsg2 = " \"Id\":0, \"Content\": \"This is just a sample message.\" ";
+            string jsonMsg3 = "";
+            // Act
+            int msg0IdActual = msgColl.GetIdFromJson(jsonMsg0);
+            int msg1IdActual = msgColl.GetIdFromJson(jsonMsg1);
+            int msg2IdActual = msgColl.GetIdFromJson(jsonMsg2);
+            int msg3IdActual = msgColl.GetIdFromJson(jsonMsg3);
+            
+            // Assert
+            Assert.AreEqual(msg0Id, msg0IdActual);
+            Assert.AreEqual(-1, msg1IdActual);
+            Assert.AreEqual(-1, msg2IdActual);
+            Assert.AreEqual(-1, msg3IdActual);
+            msgColl.Reset();
+        }
     }
 }

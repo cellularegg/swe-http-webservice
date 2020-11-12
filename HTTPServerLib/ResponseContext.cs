@@ -47,17 +47,35 @@ namespace HTTPServerLib
                         string msgContent = _msgColl.GetMsgContentFromJson(request.Body);
                         if (msgContent == string.Empty)
                         {
-                            return new ResponseContext("400 Bad Request", "text/plain", "Error, Msg was not in the correct JOSN Format.");
+                            return new ResponseContext("400 Bad Request", "text/plain", "Error, Msg was not in the correct JOSN Format.\n");
                         }
                         else
                         {
                             _msgColl.AddMessage(msgContent);
-                            return new ResponseContext("201 Created", "text/plain", "Message Successfully created.");
+                            return new ResponseContext("201 Created", "text/plain", "Message successfully created.\n");
                         }
                     }
                     return PageNotFoundResponse();
                 //break;
                 case RequestMethod.PUT:
+                    if (request.Path == "/messages")
+                    {
+                        Tuple<int, string> msg = _msgColl.GetMsgTupleFromJson(request.Body);
+                        if (msg == null)
+                        {
+                            return new ResponseContext("400 Bad Request", "text/plain", "Error, Msg was not in the correct JOSN Format.\n");
+                        }
+                        else
+                        {
+                            if (_msgColl.UpdateMessage(msg.Item1, msg.Item2))
+                            {
+                                return new ResponseContext("200 OK", "text/plain", "Message successfully edited.\n");
+                            }
+                            // TODO Maybe change status code to 400?
+                            return new ResponseContext("500 Internal Server Error", "text/plain", $"Error, when editing msg with Id: {msg.Item1}.\n");
+                        }
+                    }
+                    return PageNotFoundResponse();
                 //break;
                 case RequestMethod.DELETE:
                 //break;
@@ -68,15 +86,15 @@ namespace HTTPServerLib
 
         private static ResponseContext NullResponse()
         {
-            return new ResponseContext("400 Bad Request", "text/plain", "Error bad request");
+            return new ResponseContext("400 Bad Request", "text/plain", "Error bad request\n");
         }
         private static ResponseContext PageNotFoundResponse()
         {
-            return new ResponseContext("404 Bad Request", "text/plain", "Error page not found");
+            return new ResponseContext("404 Bad Request", "text/plain", "Error page not found\n");
         }
         private static ResponseContext MethodNotAllowedResponse()
         {
-            return new ResponseContext("405 Bad Request", "text/plain", "Error method not allowed");
+            return new ResponseContext("405 Bad Request", "text/plain", "Error method not allowed\n");
         }
         public void Post(NetworkStream stream)
         {

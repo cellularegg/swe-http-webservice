@@ -4,6 +4,7 @@
 | 20-oct-2020 | 2.75 | Started developing HTTP Server |
 | 21-oct-2020 | 3 | Added MessageCollection + Tests |
 | 11-nov-2020 | 3 | Further developed MsgColl + Implemented GET /messages and POST /messages |
+| 12-nov-2020 | 4 | Implemented other request Methods and msg in Path (GET /msgs/1) |
 
 
 # REST/HTTP-based plain-text Webservices

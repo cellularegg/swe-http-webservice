@@ -82,7 +82,9 @@ namespace HTTPServerLib
 
         public override string ToString()
         {
-            string tmp = $"RequestContext:{Environment.NewLine}";
+
+            string tmp = $"----------------------------------------------------------{Environment.NewLine}";
+            tmp += $"RequestContext:{Environment.NewLine}";
             tmp += $"\tType: {this.Method}{Environment.NewLine}";
             tmp += $"\tPath {this.Path}{Environment.NewLine}";
             tmp += $"\tHost: {this.Host}{Environment.NewLine}";

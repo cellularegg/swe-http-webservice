@@ -57,9 +57,11 @@ namespace HTTPServerLib
             }
 
             RequestContext req = RequestContext.GetRequestContext(msg);
-            Debug.WriteLine(req);
+            Console.WriteLine(req);
             ResponseContext rsp = ResponseContext.From(req);
-            rsp.Post(client.GetStream());
+            StreamWriter writer = new StreamWriter(client.GetStream()) { AutoFlush = true };
+            Console.WriteLine(rsp.GetAsString(true));
+            writer.Write(rsp.GetAsString(false));
         }
     }
 }

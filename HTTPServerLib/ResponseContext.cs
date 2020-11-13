@@ -11,12 +11,18 @@ namespace HTTPServerLib
     {
         private string _Body = null;
         private string _Status;
-        private string _ContentType;
+        //private string _ContentType;
+        public Dictionary<string, string> Headers { get; private set; }
+
         private ResponseContext(string status, string contentType, string body)
         {
-            this._ContentType = contentType;
+            //this._ContentType = contentType;
             this._Status = status;
             this._Body = body;
+            Headers = new Dictionary<string, string>();
+            Headers.Add("Content-Type", contentType);
+            Headers.Add("Content-Length", Encoding.UTF8.GetBytes(_Body).Length.ToString());
+
         }
 
         public static ResponseContext From(RequestContext request)
@@ -78,7 +84,8 @@ namespace HTTPServerLib
                 //break;
                 case RequestMethod.PUT:
                     // Or if(msgId == -1) You can send PUT updates but have to provide correct json body!
-                    if (request.Path == "/messages" || msgId >= 0)
+                    // Nearly the same code twice maybe TODO refactor this!
+                    if (request.Path == "/messages")
                     {
                         Tuple<int, string> msg = _msgColl.GetMsgTupleFromJson(request.Body);
                         if (msg == null)
@@ -93,6 +100,24 @@ namespace HTTPServerLib
                             }
                             // Maybe 500 is not the correct status code??
                             return new ResponseContext("500 Internal Server Error", "text/plain", $"Error, when editing msg with Id: {msg.Item1}.\n");
+                        }
+                    }
+                    else if (msgId >= 0)
+                    {
+                        string msgContent = _msgColl.GetMsgContentFromJson(request.Body);
+                        if (msgContent == string.Empty)
+                        {
+                            return new ResponseContext("400 Bad Request", "text/plain", "Error, Msg was not in the correct JOSN Format.\n");
+                        }
+                        else
+                        {
+                            if (_msgColl.UpdateMessage(msgId, msgContent))
+                            {
+                                return new ResponseContext("200 OK", "text/plain", "Message successfully edited.\n");
+                            }
+                            // Maybe 500 is not the correct status code??
+                            return new ResponseContext("500 Internal Server Error", "text/plain", $"Error, when editing msg with Id: {msgId}.\n");
+
                         }
                     }
                     return PageNotFoundResponse();
@@ -164,17 +189,41 @@ namespace HTTPServerLib
             }
             return -100;
         }
-        public void Post(NetworkStream stream)
+
+        public string GetAsString(bool forDebugging = false)
         {
-            StreamWriter writer = new StreamWriter(stream) { AutoFlush = true };
             StringBuilder sb = new StringBuilder();
-            sb.AppendLine(HTTPServer.VERSION + " " + _Status);
-            sb.AppendLine("Content-Type: " + _ContentType);
-            sb.AppendLine("Content-Length: " + Encoding.UTF8.GetBytes(_Body).Length);
-            sb.AppendLine();
-            sb.AppendLine(_Body);
-            System.Diagnostics.Debug.WriteLine(sb.ToString());
-            writer.Write(sb.ToString());
+            if (forDebugging)
+            {
+
+                sb.AppendLine("----------------------------------------------------------");
+                sb.AppendLine("ResponseContext:");
+                sb.AppendLine("\tStatus: " + _Status);
+                sb.AppendLine("\tHeaders: ");
+                foreach (KeyValuePair<string, string> header in this.Headers)
+                {
+                    sb.AppendLine($"\t\t {header.Key} : {header.Value}");
+                }
+                sb.AppendLine("\tBody:");
+                // remove \r from \r\n
+                string tmpBody = _Body.Replace("\r", string.Empty);
+                string[] lines = tmpBody.Split('\n');
+                foreach (string line in lines)
+                {
+                    sb.AppendLine("\t\t" + line);
+                }
+            }
+            else
+            {
+                sb.AppendLine(HTTPServer.VERSION + " " + _Status);
+                foreach (KeyValuePair<string, string> header in this.Headers)
+                {
+                    sb.AppendLine(header.Key + ":" + header.Value);
+                }
+                sb.AppendLine();
+                sb.AppendLine(_Body);
+            }
+            return sb.ToString();
         }
     }
 }

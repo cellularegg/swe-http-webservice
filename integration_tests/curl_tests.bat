@@ -22,7 +22,7 @@ REM POST Message (Store new message)
 curl -X POST http://localhost:8080/messages -d "{'Content': 'Hey This is my THIRD msg.'}"
 
 REM PUT Message 1 (Update existing message)
-curl -X PUT http://localhost:8080/messages/1 -d "{'Content': 'Edited my third message!'}"
+curl -X PUT http://localhost:8080/messages/1 -d "{'Content': 'Edited my SECOND message!'}"
 
 REM GET Messages
 curl -X GET http://localhost:8080/messages

@@ -14,9 +14,7 @@ namespace HTTPServerLib
         public string Path { get; set; }
         public string Host { get; set; }
         public string Body { get; set; }
-        // TODO Change Headers to Dict
         public Dictionary<string, string> Headers { get; set; }
-        // TODO Add body for POST request.
 
         private RequestContext(RequestMethod method, string path, string host, Dictionary<string, string> headers, string body = "")
         {
@@ -33,6 +31,7 @@ namespace HTTPServerLib
             {
                 return null;
             }
+            request = request.Replace("\r", string.Empty);
             string[] content = request.Split('\n');
 
             string methodString = content[0].Split(' ')[0];
@@ -40,7 +39,7 @@ namespace HTTPServerLib
             string path = content[0].Split(' ')[1];
             Dictionary<string, string> headers = new Dictionary<string, string>();
             int bodyStartIdx = -1;
-            string body = "";
+            string body = string.Empty;
             // Parse String to Enum
             try
             {
@@ -74,10 +73,17 @@ namespace HTTPServerLib
             {
                 for (int i = bodyStartIdx + 1; i < content.Length; i++)
                 {
-                    body += content[i] + "\n";
+                    if (!string.IsNullOrWhiteSpace(content[i]))
+                    {
+                        body += content[i] + Environment.NewLine;
+                    }
                 }
             }
-            return new RequestContext(requestMethod, path, headers["host"], headers, body);
+            if (headers.ContainsKey("host"))
+            {
+                return new RequestContext(requestMethod, path, headers["host"], headers, body);
+            }
+            return null;
         }
 
         public override string ToString()

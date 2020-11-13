@@ -8,6 +8,7 @@
 
 
 # REST/HTTP-based plain-text Webservices
+[![.NET Core](https://github.com/cellularegg/swe-http-webservice/workflows/.NET%20Core/badge.svg)](https://github.com/cellularegg/swe-http-webservice/actions?query=workflow%3A%22.NET+Core%22)
 
 This project is intended to create a webservice handler based on a restful HTTP-based
 server. To test the general purpose implementation a message resource is created with

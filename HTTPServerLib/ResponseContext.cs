@@ -7,25 +7,24 @@ using System.Text;
 
 namespace HTTPServerLib
 {
-    class ResponseContext
+    public class ResponseContext
     {
-        private string _Body = null;
-        private string _Status;
+        public string Body { get; private set; }
+        public string Status{ get; private set; }
         //private string _ContentType;
         public Dictionary<string, string> Headers { get; private set; }
 
         private ResponseContext(string status, string contentType, string body)
         {
             //this._ContentType = contentType;
-            this._Status = status;
-            this._Body = body;
+            this.Status = status;
+            this.Body = body;
             Headers = new Dictionary<string, string>();
             Headers.Add("Content-Type", contentType);
-            Headers.Add("Content-Length", Encoding.UTF8.GetBytes(_Body).Length.ToString());
-
+            Headers.Add("Content-Length", Encoding.UTF8.GetBytes(Body).Length.ToString());
         }
 
-        public static ResponseContext From(RequestContext request)
+        public static ResponseContext GetResponseContext(RequestContext request)
         {
             if (request == null)
             {
@@ -198,7 +197,7 @@ namespace HTTPServerLib
 
                 sb.AppendLine("----------------------------------------------------------");
                 sb.AppendLine("ResponseContext:");
-                sb.AppendLine("\tStatus: " + _Status);
+                sb.AppendLine("\tStatus: " + Status);
                 sb.AppendLine("\tHeaders: ");
                 foreach (KeyValuePair<string, string> header in this.Headers)
                 {
@@ -206,7 +205,7 @@ namespace HTTPServerLib
                 }
                 sb.AppendLine("\tBody:");
                 // remove \r from \r\n
-                string tmpBody = _Body.Replace("\r", string.Empty);
+                string tmpBody = Body.Replace("\r", string.Empty);
                 string[] lines = tmpBody.Split('\n');
                 foreach (string line in lines)
                 {
@@ -215,13 +214,13 @@ namespace HTTPServerLib
             }
             else
             {
-                sb.AppendLine(HTTPServer.VERSION + " " + _Status);
+                sb.AppendLine(HTTPServer.VERSION + " " + Status);
                 foreach (KeyValuePair<string, string> header in this.Headers)
                 {
                     sb.AppendLine(header.Key + ":" + header.Value);
                 }
                 sb.AppendLine();
-                sb.AppendLine(_Body);
+                sb.AppendLine(Body);
             }
             return sb.ToString();
         }

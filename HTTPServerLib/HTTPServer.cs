@@ -56,12 +56,12 @@ namespace HTTPServerLib
                 msg += (char)sr.Read();
             }
 
-            RequestContext req = RequestContext.GetRequestContext(msg);
-            Console.WriteLine(req);
-            ResponseContext rsp = ResponseContext.From(req);
+            RequestContext request = RequestContext.GetRequestContext(msg);
+            Console.WriteLine(request);
+            ResponseContext response = ResponseContext.GetResponseContext(request);
             StreamWriter writer = new StreamWriter(client.GetStream()) { AutoFlush = true };
-            Console.WriteLine(rsp.GetAsString(true));
-            writer.Write(rsp.GetAsString(false));
+            Console.WriteLine(response.GetAsString(true));
+            writer.Write(response.GetAsString(false));
         }
     }
 }

@@ -5,6 +5,7 @@
 | 21-oct-2020 | 3 | Added MessageCollection + Tests |
 | 11-nov-2020 | 3 | Further developed MsgColl + Implemented GET /messages and POST /messages |
 | 12-nov-2020 | 4 | Implemented other request Methods and msg in Path (GET /msgs/1) |
+| 15-nov-2020 | 2 | Recorded Video + minor tweaks |
 
 
 # REST/HTTP-based plain-text Webservices

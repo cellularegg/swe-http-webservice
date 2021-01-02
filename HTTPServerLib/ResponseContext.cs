@@ -30,7 +30,7 @@ namespace HTTPServerLib
             {
                 return NullResponse();
             }
-            MessageCollection _msgColl = MessageCollection.GetMessageCollection();
+            MessageCollection _msgColl = MessageCollection.Instance;
             int msgId = GetMsgIdFromPath(request.Path);
             if (msgId == -100)
             {

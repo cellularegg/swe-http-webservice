@@ -13,7 +13,7 @@ namespace HTTPServerLib.Test
         public void TestMessageCollectionIndex()
         {
             // Arrange
-            MessageCollection msgColl = MessageCollection.GetMessageCollection();
+            MessageCollection msgColl = MessageCollection.Instance;
             int addingTillIdx = 3;
             for (int i = 0; i < addingTillIdx; i++)
             {
@@ -29,7 +29,7 @@ namespace HTTPServerLib.Test
         public void TestMessageCollectionRemove()
         {
             // Arrange
-            MessageCollection msgColl = MessageCollection.GetMessageCollection();
+            MessageCollection msgColl = MessageCollection.Instance;
             msgColl.AddMessage("Test");
             msgColl.AddMessage("Test");
             msgColl.AddMessage("Test");
@@ -52,7 +52,7 @@ namespace HTTPServerLib.Test
         public void TestMessageCollectionGetMessageAsJson()
         {
             // Arrange
-            MessageCollection msgColl = MessageCollection.GetMessageCollection();
+            MessageCollection msgColl = MessageCollection.Instance;
             // Id: 0
             string msg0Content = "Hey, This is just a test Message!";
             msgColl.AddMessage(msg0Content);
@@ -78,7 +78,7 @@ namespace HTTPServerLib.Test
         public void TestMessageCollectionGetMsgTupleFromJson()
         {
             // Arrange
-            MessageCollection msgColl = MessageCollection.GetMessageCollection();
+            MessageCollection msgColl = MessageCollection.Instance;
             int msg0Id = 0;
             string msg0Content = "This is just a sample message.";
             string jsonMsg0 = "{ \"Id\": " + msg0Id + ", \"Content\": \"" + msg0Content + "\" }";
@@ -105,7 +105,7 @@ namespace HTTPServerLib.Test
         public void TestMessageCollectionUpdateMessage()
         {
             // Arrange
-            MessageCollection msgColl = MessageCollection.GetMessageCollection();
+            MessageCollection msgColl = MessageCollection.Instance;
             msgColl.AddMessage("Hey");
             string updatedContent = "Hey, This is my updated Message Content";
             // Act
@@ -123,7 +123,7 @@ namespace HTTPServerLib.Test
         public void TestMessageCollectionGetMessageContent()
         {
             // Arrange
-            MessageCollection msgColl = MessageCollection.GetMessageCollection();
+            MessageCollection msgColl = MessageCollection.Instance;
             string msgContent = "Sample Message";
             msgColl.AddMessage(msgContent);
             // Act
@@ -141,8 +141,8 @@ namespace HTTPServerLib.Test
             // Test just for me to check if I implemented Singleton correctly
 
             // Arrange
-            MessageCollection msgColl1 = MessageCollection.GetMessageCollection();
-            MessageCollection msgColl2 = MessageCollection.GetMessageCollection();
+            MessageCollection msgColl1 = MessageCollection.Instance;
+            MessageCollection msgColl2 = MessageCollection.Instance;
 
             string msgContent = "Sample Message";
             msgColl1.AddMessage(msgContent);
@@ -160,7 +160,7 @@ namespace HTTPServerLib.Test
         public void TestMessageCollectionGetMessagesArrayAsJson()
         {
             // Arrange
-            MessageCollection msgColl = MessageCollection.GetMessageCollection();
+            MessageCollection msgColl = MessageCollection.Instance;
             string actualMsgsEmpty = msgColl.GetMessagesArrayAsJson();
             // Id: 0
             string msg0Content = "Hey, This is just a test Message!";
@@ -186,8 +186,8 @@ namespace HTTPServerLib.Test
         public void TestMessageCollectionReset()
         {
             // Arrange
-            MessageCollection msgColl1 = MessageCollection.GetMessageCollection();
-            MessageCollection msgColl2 = MessageCollection.GetMessageCollection();
+            MessageCollection msgColl1 = MessageCollection.Instance;
+            MessageCollection msgColl2 = MessageCollection.Instance;
             // Id: 0
             string msg0Content = "Hey, This is just a test Message!";
             msgColl1.AddMessage(msg0Content);
@@ -209,7 +209,7 @@ namespace HTTPServerLib.Test
         public void TestMessageCollectionGetMsgContentFromJson()
         {
             // Arrange
-            MessageCollection msgColl = MessageCollection.GetMessageCollection();
+            MessageCollection msgColl = MessageCollection.Instance;
             int msg0Id = 0;
             string msg0Content = "This is just a sample message.";
             string jsonMsg0 = "{ \"Id\": " + msg0Id + ", \"Content\": \"" + msg0Content + "\" }";
@@ -236,7 +236,7 @@ namespace HTTPServerLib.Test
         public void TestMessageCollectionGetIdFromJson()
         {
             // Arrange
-            MessageCollection msgColl = MessageCollection.GetMessageCollection();
+            MessageCollection msgColl = MessageCollection.Instance;
             int msg0Id = 0;
             string jsonMsg0 = "{ \"Id\": " + msg0Id + "}";
             string jsonMsg1 = "{ \"Content\": \"Sample content\" }";

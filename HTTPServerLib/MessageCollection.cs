@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
@@ -8,29 +9,40 @@ using System.Text.Json;
 
 namespace HTTPServerLib
 {
+    // Singleton pattern see: https://csharpindepth.com/Articles/Singleton#cctor
     public class MessageCollection
     {
-        // TODO Make threadsafe
-        private static MessageCollection _instance = new MessageCollection();
-        public static MessageCollection GetMessageCollection()
+        private static readonly MessageCollection _instance = new MessageCollection();
+
+        public static MessageCollection Instance
         {
-            return _instance;
+            get { return _instance; }
         }
+
         // Int is ID, string is Message Content
-        private Dictionary<int, string> _Messages;
+        private ConcurrentDictionary<int, string> _Messages;
         public int MaxIdx { get; private set; }
-        public int Count { get { return _Messages.Count; } }
+
+        public int Count
+        {
+            get { return _Messages.Count; }
+        }
+
+        static MessageCollection()
+        {
+        }
+
         private MessageCollection()
         {
             MaxIdx = 0;
-            _Messages = new Dictionary<int, string>();
+            _Messages = new ConcurrentDictionary<int, string>();
         }
 
         // For Testing with singleton class
         public void Reset()
         {
             MaxIdx = 0;
-            _Messages = new Dictionary<int, string>();
+            _Messages = new ConcurrentDictionary<int, string>();
         }
 
 
@@ -54,7 +66,6 @@ namespace HTTPServerLib
             }
         }
 
-        
 
         public bool UpdateMessage(int id, string content)
         {
@@ -63,22 +74,29 @@ namespace HTTPServerLib
                 _Messages[id] = content;
                 return true;
             }
+
             return false;
         }
+
         public bool DeleteMessage(int id)
         {
             if (_Messages.ContainsKey(id))
             {
-                _Messages.Remove(id);
-                return true;
+                string rmvdMsg;
+                return _Messages.TryRemove(id, out rmvdMsg);
             }
+
             return false;
         }
 
         public void AddMessage(string content)
         {
-            _Messages.Add(MaxIdx, content);
-            MaxIdx++;
+            bool succeeded = _Messages.TryAdd(MaxIdx, content);
+            if (succeeded)
+            {
+                MaxIdx++;
+            }
+            // TODO Add return status
         }
 
         public string GetMessageContent(int id)
@@ -87,14 +105,17 @@ namespace HTTPServerLib
             {
                 return _Messages[id];
             }
+
             return string.Empty;
         }
+
         public string GetMessageAsJson(int id)
         {
             if (MaxIdx < id)
             {
                 return "";
             }
+
             if (_Messages.ContainsKey(id))
             {
                 //Serialize
@@ -103,16 +124,19 @@ namespace HTTPServerLib
                 jsonObject.Add("Content", _Messages[id]);
                 return jsonObject.ToString();
             }
+
             return "";
         }
 
         public string GetMessagesArrayAsJson()
         {
-            if(this.Count == 0)
+            if (this.Count == 0)
             {
                 return "";
             }
-            JArray result = new JArray(from m in _Messages select new JObject(new JProperty("Id", m.Key), new JProperty("Content", m.Value)));
+
+            JArray result = new JArray(from m in _Messages
+                select new JObject(new JProperty("Id", m.Key), new JProperty("Content", m.Value)));
             return result.ToString();
         }
 

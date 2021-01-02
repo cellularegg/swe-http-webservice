@@ -25,43 +25,65 @@ namespace HTTPServerLib
 
         public void Start()
         {
-            Thread serverThread = new Thread(new ThreadStart(Run));
-            serverThread.Start();
+            // Thread serverThread = new Thread(new ThreadStart(Run));
+            // serverThread.Start();
+            this.Run();
         }
 
         private void Run()
         {
             isRunning = true;
             _tcpListener.Start();
-            while (isRunning)
+            try
             {
-                Console.WriteLine("Waiting for connection.");
-                TcpClient client = _tcpListener.AcceptTcpClient();
-                Console.WriteLine("Client connected.");
-                HandleClient(client);
-                client.Close();
+                while (isRunning)
+                {
+                    Console.WriteLine("Waiting for connection.");
+                    TcpClient client = _tcpListener.AcceptTcpClient();
+                    Console.WriteLine("Client connected.");
+                    // Thread t = new Thread(new ParameterizedThreadStart(HandleClient));
+                    // t.Start(client);
+                    ThreadPool.QueueUserWorkItem(HandleClient, client);
+                }
             }
+            catch (SocketException e)
+            {
+                Console.WriteLine(e);
+                isRunning = false;
+                _tcpListener.Stop();
+            }
+
+
             isRunning = false;
             _tcpListener.Stop();
-
         }
 
-        private void HandleClient(TcpClient client)
+        private void HandleClient(Object obj)
         {
+            TcpClient client = (TcpClient) obj;
             StreamReader sr = new StreamReader(client.GetStream());
             string msg = "";
-            while (sr.Peek() != -1)
+            try
             {
-                // sr.ReadLine() it gets stuck when receiving POST requests
-                msg += (char)sr.Read();
-            }
+                while (sr.Peek() != -1)
+                {
+                    // sr.ReadLine() it gets stuck when receiving POST requests
+                    msg += (char) sr.Read();
+                }
 
-            RequestContext request = RequestContext.GetRequestContext(msg);
-            Console.WriteLine(request);
-            ResponseContext response = ResponseContext.GetResponseContext(request);
-            StreamWriter writer = new StreamWriter(client.GetStream()) { AutoFlush = true };
-            Console.WriteLine(response.GetAsString(true));
-            writer.Write(response.GetAsString(false));
+                RequestContext request = RequestContext.GetRequestContext(msg);
+                Console.WriteLine(request);
+                ResponseContext response = ResponseContext.GetResponseContext(request);
+                StreamWriter writer = new StreamWriter(client.GetStream()) {AutoFlush = true};
+                Console.WriteLine(response.GetAsString(true));
+                writer.Write(response.GetAsString(false));
+                client.Close();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                client.Close();
+            }
         }
     }
 }
